@@ -5,11 +5,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FlashCardSet {
-    private List<FlashCard> flashCardSet;
-    private List<String> terms;
-    private List<String> definitions;
-    private final Comparator<FlashCard> flashCardComparator = Comparator.comparingInt(FlashCard::getErrors).reversed();
 
+    private final List<FlashCard> flashCardSet;
+    private final List<String> terms;
+    private final List<String> definitions;
+    private final Comparator<FlashCard> flashCardComparator = Comparator.comparingInt(FlashCard::getErrors).reversed();
 
 
     FlashCardSet() {
@@ -19,7 +19,7 @@ public class FlashCardSet {
     }
 
     public boolean addFlashCard(FlashCard flashCard) {
-        if(!containsTerm(flashCard.getTerm()) && !containsDefinition(flashCard.getDefinition())) {
+        if (!containsTerm(flashCard.getTerm()) && !containsDefinition(flashCard.getDefinition())) {
             flashCardSet.add(flashCard);
             terms.add(flashCard.getTerm());
             definitions.add(flashCard.getDefinition());
@@ -36,19 +36,9 @@ public class FlashCardSet {
         return !flashCardSet.isEmpty() && definitions.contains(def);
     }
 
-    public FlashCardSet removeCard(String term) {
-        for (FlashCard flashCard : flashCardSet) {
-            if(flashCard.getTerm().equals(term)) {
-                flashCardSet.remove(flashCard);
-                terms.remove(flashCard.getTerm());
-                definitions.remove(flashCard.getDefinition());
-            }
-        }
-        return this;
-    }
     public FlashCard findByDefinition(String def) {
         for (FlashCard flashCard : flashCardSet) {
-            if(flashCard.getDefinition().equals(def)) {
+            if (flashCard.getDefinition().equals(def)) {
                 return flashCard;
             }
         }
@@ -57,7 +47,7 @@ public class FlashCardSet {
 
     public FlashCard findByTerm(String term) {
         for (FlashCard flashCard : flashCardSet) {
-            if(flashCard.getTerm().equals(term)) {
+            if (flashCard.getTerm().equals(term)) {
                 return flashCard;
             }
         }
@@ -86,7 +76,7 @@ public class FlashCardSet {
             return new ArrayList<>();
         }
         for (FlashCard flashCard : flashCardSet) {
-            if(flashCard.getErrors() == highestError) {
+            if (flashCard.getErrors() == highestError) {
                 mostErrors.add(flashCard);
             }
         }

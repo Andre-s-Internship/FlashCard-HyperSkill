@@ -1,7 +1,8 @@
 package org.example;
 
 public class FlashCard {
-    private String term;
+
+    private final String term;
     private String definition;
 
     private int errors;
@@ -11,6 +12,7 @@ public class FlashCard {
         definition = def;
         errors = 0;
     }
+
     FlashCard(String card, String def, int errors) {
         this.term = card;
         definition = def;
@@ -25,11 +27,14 @@ public class FlashCard {
         return definition;
     }
 
-    public void setDefinition(String def) {definition = def;}
+    public void setDefinition(String def) {
+        definition = def;
+    }
 
     public void incrementError() {
         errors += 1;
     }
+
     public int getErrors() {
         return errors;
     }
