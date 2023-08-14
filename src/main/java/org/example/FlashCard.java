@@ -32,7 +32,7 @@ public class FlashCard {
     }
 
     public void incrementError() {
-        errors += 1;
+        this.errors += 1;
     }
 
     public int getErrors() {

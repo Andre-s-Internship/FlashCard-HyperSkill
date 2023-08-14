@@ -11,6 +11,10 @@ public class FlashCardArchive {
     private static List<String> terminalArguments;
     private static final FlashCardSet flashCards = new FlashCardSet();
 
+    public static FlashCardSet getFlashCards() {
+        return flashCards;
+    }
+
     public static void main(String[] args) throws IOException {
         terminalArguments = List.of(args);
         if (!terminalArguments.isEmpty() && terminalArguments.contains("-import")) {
@@ -90,7 +94,7 @@ public class FlashCardArchive {
         term = scanner.nextLine();
         writeLog(LogState.INPUT, term);
         if (flashCards.containsTerm(term)) {
-            System.out.println(writeLog(LogState.OUTPUT, "The card \"" + term + "\" already exists"));
+            System.out.println(writeLog(LogState.OUTPUT, "The card \"" + term + "\" already exists."));
             return;
         }
         System.out.println(writeLog(LogState.OUTPUT, "The definition of the card:"));
@@ -215,15 +219,8 @@ public class FlashCardArchive {
         System.out.println(writeLog(LogState.OUTPUT, "Card statistics have been reset."));
     }
 
-    static void exportLog() throws IOException {
-        System.out.println(writeLog(LogState.OUTPUT, "File name:"));
-        String fileName = scanner.nextLine();
-        writeLog(LogState.INPUT, fileName);
-        FileWriter fileWriter = new FileWriter(fileName);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        bufferedWriter.write(String.valueOf(log));
-        bufferedWriter.close();
-        System.out.println(writeLog(LogState.OUTPUT, "The log has been saved."));
+    static void exportLog() {
+        System.out.println(log);
     }
 
     static String writeLog(LogState state, String s) {
@@ -246,6 +243,4 @@ public class FlashCardArchive {
             }
         }
     }
-
-
 }
