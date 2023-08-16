@@ -10,6 +10,17 @@ public class FlashCardArchive {
     private static final StringBuilder log = new StringBuilder();
     private static List<String> terminalArguments;
     private static final FlashCardSet flashCards = new FlashCardSet();
+    private static final String IMPORT_COMMAND = "-import";
+    private static final String MENU_ACTIONS = "Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):";
+    private static final String ACTION_ADD = "add";
+    private static final String ACTION_REMOVE = "remove";
+    private static final String ACTION_IMPORT = "import";
+    private static final String ACTION_EXPORT = "export";
+    private static final String ACTION_ASK = "ask";
+    private static final String ACTION_EXIT = "exit";
+    private static final String ACTION_LOG = "log";
+    private static final String ACTION_HARDEST_CARD = "hardest card";
+    private static final String ACTION_RESET_STATS = "reset stats";
 
     public static FlashCardSet getFlashCards() {
         return flashCards;
@@ -17,49 +28,42 @@ public class FlashCardArchive {
 
     public static void main(String[] args) throws IOException {
         terminalArguments = List.of(args);
-        if (!terminalArguments.isEmpty() && terminalArguments.contains("-import")) {
-            for (int i = 0; i < terminalArguments.size(); i++) {
-                if (terminalArguments.get(i).equals("-import")) {
-                    importCards(terminalArguments.get(i + 1));
-                    break;
-                }
-            }
-        }
+        importSetup(terminalArguments);
         menu();
     }
 
     static void menu() throws IOException {
-        System.out.println(writeLog(LogState.OUTPUT, "Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):"));
+        System.out.println(writeLog(LogState.OUTPUT, MENU_ACTIONS));
         String input = scanner.nextLine();
         writeLog(LogState.INPUT, input);
         switch (input) {
-            case "add": {
+            case ACTION_ADD: {
                 addCard();
                 menu();
             }
-            case "remove": {
+            case ACTION_REMOVE: {
                 removeCard();
                 menu();
             }
-            case "import": {
+            case ACTION_IMPORT: {
                 System.out.println(writeLog(LogState.OUTPUT, "File name:"));
                 String filePath = scanner.nextLine();
                 writeLog(LogState.INPUT, filePath);
                 importCards(filePath);
                 menu();
             }
-            case "export": {
+            case ACTION_EXPORT: {
                 System.out.println(writeLog(LogState.OUTPUT, "File name:"));
                 String fileName = scanner.nextLine();
                 writeLog(LogState.INPUT, fileName);
                 exportCards(fileName);
                 menu();
             }
-            case "ask": {
+            case ACTION_ASK: {
                 ask();
                 menu();
             }
-            case "exit": {
+            case ACTION_EXIT: {
                 System.out.println(writeLog(LogState.OUTPUT, "Bye bye!"));
                 if (!terminalArguments.isEmpty() && terminalArguments.contains("-export")) {
                     for (int i = 0; i < terminalArguments.size(); i++) {
@@ -71,21 +75,20 @@ public class FlashCardArchive {
                 }
                 System.exit(0);
             }
-            case "log": {
+            case ACTION_LOG: {
                 exportLog();
                 menu();
             }
-            case "hardest card": {
+            case ACTION_HARDEST_CARD: {
                 hardestCard();
                 menu();
             }
-            case "reset stats": {
+            case ACTION_RESET_STATS: {
                 resetErrors();
                 menu();
             }
         }
     }
-
 
     static void addCard() {
         String term;
@@ -93,6 +96,7 @@ public class FlashCardArchive {
         System.out.println(writeLog(LogState.OUTPUT, "The Card:"));
         term = scanner.nextLine();
         writeLog(LogState.INPUT, term);
+
         if (flashCards.containsTerm(term)) {
             System.out.println(writeLog(LogState.OUTPUT, "The card \"" + term + "\" already exists."));
             return;
@@ -112,6 +116,7 @@ public class FlashCardArchive {
         System.out.println(writeLog(LogState.OUTPUT, "Which Card?"));
         String term = scanner.nextLine();
         writeLog(LogState.INPUT, term);
+
         if (!flashCards.containsTerm(term)) {
             System.out.println(writeLog(LogState.OUTPUT, "Can't remove \"" + term + "\": there is no such card."));
         } else {
@@ -132,14 +137,17 @@ public class FlashCardArchive {
         while (true) {
             assert sc != null;
             if (!sc.hasNextLine()) break;
-            String term = sc.nextLine();
-            writeLog(LogState.INPUT, term);
+                String term = sc.nextLine();
+                writeLog(LogState.INPUT, term);
+
             if (!sc.hasNextLine()) break;
-            String def = sc.nextLine();
-            writeLog(LogState.INPUT, def);
+                String def = sc.nextLine();
+                writeLog(LogState.INPUT, def);
+
             if (!sc.hasNextLine()) break;
-            int errors = Integer.parseInt(sc.nextLine());
-            writeLog(LogState.INPUT, errors + "");
+                int errors = Integer.parseInt(sc.nextLine());
+                writeLog(LogState.INPUT, errors + "");
+
             if (flashCards.containsTerm(term)) {
                 flashCards.changeDefinition(term, def);
                 count++;
@@ -156,6 +164,7 @@ public class FlashCardArchive {
         FileWriter fileWriter = new FileWriter(fileName);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         int size = flashCards.getInstance().size();
+
         for (FlashCard flashCard : flashCards.getInstance()) {
             bufferedWriter.write(flashCard.getTerm() + "\n" + flashCard.getDefinition() + "\n" + flashCard.getErrors() + "\n");
         }
@@ -168,17 +177,23 @@ public class FlashCardArchive {
         int count = scanner.nextInt();
         writeLog(LogState.INPUT, count + "");
         scanner.nextLine();
+
         for (int i = 0; i < count; i++) {
             FlashCard flashCard = flashCards.getInstance().get(i % flashCards.getInstance().size());
             System.out.println(writeLog(LogState.OUTPUT, "Print the definition of \"" + flashCard.getTerm() + "\":"));
+
             String answer = scanner.nextLine();
             writeLog(LogState.INPUT, answer);
+
             if (flashCard.getDefinition().equals(answer)) {
                 System.out.println(writeLog(LogState.OUTPUT, "Correct!"));
-            } else if (flashCards.containsDefinition(answer)) {
+
+            }
+            else if (flashCards.containsDefinition(answer)) {
                 System.out.println(writeLog(LogState.OUTPUT, "Wrong. The right answer is \"" + flashCard.getDefinition() + "\"," + " but your definition is correct for \"" + flashCards.findByDefinition(answer).getTerm() + "\"."));
                 flashCard.incrementError();
-            } else {
+            }
+            else {
                 System.out.println(writeLog(LogState.OUTPUT, "Wrong. The right answer is \"" + flashCard.getDefinition() + "\"."));
                 flashCard.incrementError();
             }
@@ -199,15 +214,18 @@ public class FlashCardArchive {
         List<FlashCard> flashCardList = flashCards.findHighestErrors();
         if (flashCardList.isEmpty()) {
             System.out.println(writeLog(LogState.OUTPUT, "There are no cards with errors."));
-        } else if (flashCardList.size() == 1) {
+        }
+        else if (flashCardList.size() == 1) {
             System.out.println(writeLog(LogState.OUTPUT, "The hardest card is \"" + flashCardList.get(0).getTerm() + "\". You have " + flashCardList.get(0).getErrors() + " errors answering it."));
-        } else {
+        }
+        else {
             StringBuilder terms = new StringBuilder();
             int errorCount = 0;
             for (FlashCard flashCard : flashCardList) {
                 terms.append("\"").append(flashCard.getTerm()).append("\",");
                 errorCount = flashCard.getErrors();
             }
+
             terms.deleteCharAt(terms.length() - 1);
             terms.append(".");
             System.out.println(writeLog(LogState.OUTPUT, "The hardest cards are " + terms + " You have " + errorCount + " errors answering them."));
@@ -230,16 +248,13 @@ public class FlashCardArchive {
         return s;
     }
 
-    enum LogState {
-        INPUT {
-            @Override
-            public String toString() {
-                return "INPUT: ";
-            }
-        }, OUTPUT {
-            @Override
-            public String toString() {
-                return "OUTPUT: ";
+    public static void importSetup(List<String> terminalArguments) throws IOException {
+        if (!terminalArguments.isEmpty() && terminalArguments.contains(IMPORT_COMMAND)) {
+            for (int i = 0; i < terminalArguments.size(); i++) {
+                if (terminalArguments.get(i).equals(IMPORT_COMMAND)) {
+                    importCards(terminalArguments.get(i + 1));
+                    break;
+                }
             }
         }
     }
